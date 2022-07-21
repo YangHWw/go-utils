@@ -74,7 +74,14 @@ func deepUpdate(base, update map[string]interface{}) {
 	addMap(base, update)
 }
 
-func DeepUpdateStruct(b, u, out interface{}) error {
+func DeepUpdateStruct(b, u, out interface{}) (retErr error) {
+	defer func() {
+		if e := recover(); e != nil {
+			retErr = fmt.Errorf("deep update struct panic, %v", e)
+			return
+		}
+	}()
+
 	baseType := utils.TypeOf(b)
 	updateType := utils.TypeOf(u)
 
